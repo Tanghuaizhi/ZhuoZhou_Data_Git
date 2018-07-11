@@ -1,0 +1,70 @@
+---
+title: "ZhuoZhou_monitor_compare"
+author: "ATango"
+date: "2018年7月11日"
+output: html_document
+---
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+## 数据准备
+先尝试性导入两组数据进行比较
+一个是最靠近市区的6#点（6615），一个是最靠近山区的1#点（0907）
+
+Note:对异常异态数据时刻保持怀疑
+
+```{r import data}
+getwd()
+setwd('D:/Zhuozhou_Farmland')
+
+df_near_city <- read.csv('data/2018-04-15to2018-07-01_61694036420907.csv')
+df_far_city  <- read.csv('data/2018-04-15to2018-07-01_63586031976115.csv')
+```
+
+## 指标测试
+测试下个别指标，如生态净化能力，并进行比较
+```{r test near pm2.5}
+library(ggplot2)
+
+qplot(x = PM2p5, data = df_near_city, binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,200,25))
+
+# 转换为频数多边形来显示
+ggplot(aes(x = PM2p5, y = ..count../sum(..count..)), data = df_near_city) +
+  geom_freqpoly(binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,200,25)) +
+  xlab('PM2.5') + 
+  ylab('Percentage of that count')
+#title('PM2.5 distribution from monitor near city')
+
+#由于是幂律分布，考虑用log处理
+ggplot(aes(x = PM2p5, y = ..count../sum(..count..)), data = df_near_city) +
+  geom_freqpoly(binwidth = 1) +
+  scale_x_log10(breaks = seq(0,300,25)) +
+  xlab('PM2.5') + 
+  ylab('Percentage of that count')
+```
+
+```{r test far pm2.5}
+qplot(x = PM2p5, data = df_far_city, binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,200,25))
+
+#由于是幂律分布，考虑用log处理
+ggplot(aes(x = PM2p5, y = ..count../sum(..count..)), data = df_far_city) +
+  geom_freqpoly(binwidth = 1) +
+  scale_x_log10(breaks = seq(0,300,25)) +
+  xlab('PM2.5') + 
+  ylab('Percentage of that count')
+```
+```
+
+
+## 多点位**整体比较**
+
+
+## 单点位**分面（分时段）比较**
+
+
+## 单点位**多变量（因素）分析**
+
