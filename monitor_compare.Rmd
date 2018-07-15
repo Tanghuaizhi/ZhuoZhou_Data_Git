@@ -102,23 +102,33 @@ ggplot(data = df, aes(x = PM2p5, y = ..density.., color = monitor)) +
 导入整体数据
 ```{r import whole data}
 df_all_monitor <- read.csv('merge.csv')
+df_Zhuozhou_base <- subset(df_all_monitor, df_all_monitor$monitor != 'D7')
 ```
 
 分颜色显示
 注意：用ylim或scale_y_continuous时，实际是截取了数据后的计算结果。如果不想影响原始总体数据，更好的方式是用coord Cartesian层
-```{r}
-ggplot(data = df_all_monitor, aes(x = PM2p5, y = ..density.., color = monitor)) +
+```{r pm2.5 from 6 monitors}
+ggplot(data = df_Zhuozhou_base, aes(x = PM2p5, y = ..density.., color = monitor)) +
   geom_freqpoly(binwidth = 1) +
-  scale_x_log10() +
-  scale_y_log10() +
-  xlab('PM2.5 (lg)') + 
-  ylab('Percentage of that count (lg)') + 
-  coord_cartesian(xlim = c(10, 1000))
+  scale_x_continuous(trans='log2') +
+  scale_y_continuous() +
+  xlab('PM2.5 (log2)') + 
+  ylab('Percentage of that count') + 
+  coord_cartesian(xlim = c(2, 1024))
 ```
 从上图结果来看，M1到M6，100左右开始下降，越靠近城，下降速度越慢，郊区快速下降。
 应与生态自净能力有关，越是郊区越强。
 同时，M5几乎与M1重叠，M5为大片农田中间，证明耕地的滞尘作用明显。
 
+```{r other index comparison from 6 monitors}
+ggplot(data = df_Zhuozhou_base, aes(x = PM2p5, y = ..density.., color = monitor)) +
+  geom_freqpoly(binwidth = 1) +
+  scale_x_continuous(trans='log2') +
+  scale_y_continuous() +
+  xlab('PM2.5 (log2)') + 
+  ylab('Percentage of that count') + 
+  coord_cartesian(xlim = c(2, 1024))
+```
 
 ## 单点位**分面（分时段）比较**
 
